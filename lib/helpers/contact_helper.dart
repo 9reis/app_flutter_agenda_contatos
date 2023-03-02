@@ -15,7 +15,7 @@ class ContactHelper {
 
   ContactHelper.internal();
 
-  late Database _db;
+  Database? _db;
 
   Future<Database?> get db async {
     if (_db != null) {
@@ -30,7 +30,7 @@ class ContactHelper {
     //Pega o local onde o db é armazenado
     final databasesPath = await getDatabasesPath();
     // pega o caminho e junta com o nome do db
-    final path = join(databasesPath, "contacts.db");
+    final path = join(databasesPath, "contactsnew.db");
     //Abre o db
     return await openDatabase(path, version: 1,
         onCreate: (Database db, int newerVersion) async {
@@ -75,7 +75,7 @@ class ContactHelper {
   }
 
   //PEGA todos os contatos
-  Future<List> getAllContact() async {
+  Future<List<Contact>> getAllContact() async {
     Database? dbContact = await db;
     //Retorna uma lista de Map
     List listMap = await dbContact!.rawQuery("SELECT * FROM $contactTable");
@@ -103,11 +103,13 @@ class ContactHelper {
 }
 
 class Contact {
-  late int id;
+  int? id;
   late String name;
   late String email;
   late String phone;
   late String img;
+
+  Contact();
 
   //COnstruto - Pega o map e constroi o Contato
   Contact.fromMap(Map map) {
