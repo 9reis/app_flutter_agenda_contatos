@@ -104,10 +104,10 @@ class ContactHelper {
 
 class Contact {
   int? id;
-  late String name;
-  late String email;
-  late String phone;
-  late String img;
+  String? name;
+  String? email;
+  String? phone;
+  String? img;
 
   Contact();
 
