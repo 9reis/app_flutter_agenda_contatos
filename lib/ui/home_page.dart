@@ -3,6 +3,7 @@
 import 'dart:io';
 
 import 'package:app_flutter_agenda_contatos/helpers/contact_helper.dart';
+import 'package:app_flutter_agenda_contatos/ui/contact_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -22,11 +23,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    helper.getAllContact().then((list) {
-      setState(() {
-        contacts = list;
-      });
-    });
+    _getAllContacts();
   }
 
   @override
@@ -39,7 +36,9 @@ class _HomePageState extends State<HomePage> {
       ),
       backgroundColor: Colors.white,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          _showContactPage();
+        },
         child: Icon(Icons.add),
         backgroundColor: Colors.red,
       ),
@@ -68,7 +67,7 @@ class _HomePageState extends State<HomePage> {
                   image: DecorationImage(
                     image: contacts[index].img != null
                         ? FileImage(File(contacts[index].img!))
-                        : AssetImage("images\perfil.png") as ImageProvider,
+                        : AssetImage("images/perfil.png") as ImageProvider,
                   ),
                 ),
               ),
@@ -103,6 +102,33 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
+      onTap: () {
+        _showContactPage(contact: contacts[index]);
+      },
     );
+  }
+
+  void _showContactPage({Contact? contact}) async {
+    //Recebe um contato da tela ContactPage
+    final recContact = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ContactPage(contact: contact)),
+    );
+    if (recContact != null) {
+      if (contact != null) {
+        await helper.updateContact(recContact);
+      } else {
+        await helper.saveContact(recContact);
+      }
+      _getAllContacts();
+    }
+  }
+
+  void _getAllContacts() {
+    helper.getAllContact().then((list) {
+      setState(() {
+        contacts = list;
+      });
+    });
   }
 }
