@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:app_flutter_agenda_contatos/helpers/contact_helper.dart';
 import 'package:app_flutter_agenda_contatos/ui/contact_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 
@@ -103,9 +104,76 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       onTap: () {
-        _showContactPage(contact: contacts[index]);
+        _showOptions(context, index);
       },
     );
+  }
+
+  void _showOptions(BuildContext context, int index) {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return BottomSheet(
+            builder: (context) {
+              //Oq será mostrado no modal
+              return Container(
+                padding: EdgeInsets.all(10),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: TextButton(
+                          child: Text(
+                            'Ligar',
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 20,
+                            ),
+                          ),
+                          onPressed: () {}),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: TextButton(
+                          child: Text(
+                            'Editar',
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 20,
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                            _showContactPage(contact: contacts[index]);
+                          }),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: TextButton(
+                        child: Text(
+                          'Excluir',
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 20,
+                          ),
+                        ),
+                        onPressed: () {
+                          helper.deleteContact(contacts[index].id!);
+                          setState(() {
+                            contacts.removeAt(index);
+                            Navigator.pop(context);
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+            onClosing: () {},
+          );
+        });
   }
 
   void _showContactPage({Contact? contact}) async {
